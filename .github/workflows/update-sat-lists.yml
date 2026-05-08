@@ -21,73 +21,61 @@ jobs:
 
       - name: Descargar listas Artículo 69
         run: |
-          BASE="https://omawww.sat.gob.mx/cifras_sat/Documents"
+          BASE="https://wu1agsprosta001.blob.core.windows.net/agsc-publicaciones/Datos_abiertos/Documents_AGR"
 
           echo "Descargando Cancelados..."
-          curl -L --retry 3 --retry-delay 5 -o data/69/Cancelados.csv \
-            "${BASE}/Cancelados.csv" || echo "⚠ Error: Cancelados"
+          curl -L --retry 3 --retry-delay 5 -o data/69/Cancelados.csv             "${BASE}/Cancelados.csv" || echo "ERROR: Cancelados"
 
           echo "Descargando No_localizados..."
-          curl -L --retry 3 --retry-delay 5 -o data/69/No_localizados.csv \
-            "${BASE}/No_localizados.csv" || echo "⚠ Error: No_localizados"
+          curl -L --retry 3 --retry-delay 5 -o data/69/No_localizados.csv             "${BASE}/No_localizados.csv" || echo "ERROR: No_localizados"
 
           echo "Descargando CSDsinefectos..."
-          curl -L --retry 3 --retry-delay 5 -o data/69/CSDsinefectos.csv \
-            "${BASE}/CSDsinefectos.csv" || echo "⚠ Error: CSDsinefectos"
+          curl -L --retry 3 --retry-delay 5 -o data/69/CSDsinefectos.csv             "${BASE}/CSDsinefectos.csv" || echo "ERROR: CSDsinefectos"
 
           echo "Descargando Exigibles..."
-          curl -L --retry 3 --retry-delay 5 -o data/69/Exigibles.csv \
-            "${BASE}/Exigibles.csv" || echo "⚠ Error: Exigibles"
+          curl -L --retry 3 --retry-delay 5 -o data/69/Exigibles.csv             "${BASE}/Exigibles.csv" || echo "ERROR: Exigibles"
 
           echo "Descargando Sentencias..."
-          curl -L --retry 3 --retry-delay 5 -o data/69/Sentencias.csv \
-            "${BASE}/Sentencias.csv" || echo "⚠ Error: Sentencias"
+          curl -L --retry 3 --retry-delay 5 -o data/69/Sentencias.csv             "${BASE}/Sentencias.csv" || echo "ERROR: Sentencias"
 
           echo "Descargando ReduccionArt74CFF..."
-          curl -L --retry 3 --retry-delay 5 -o data/69/ReduccionArt74CFF.csv \
-            "${BASE}/ReduccionArt74CFF.csv" || echo "⚠ Error: ReduccionArt74CFF"
+          curl -L --retry 3 --retry-delay 5 -o data/69/ReduccionArt74CFF.csv             "${BASE}/ReduccionArt74CFF.csv" || echo "ERROR: ReduccionArt74CFF"
 
           echo "Descargando EntespublicosydeGobiernoomisos..."
-          curl -L --retry 3 --retry-delay 5 -o data/69/EntespublicosydeGobiernoomisos.csv \
-            "${BASE}/EntespublicosydeGobiernoomisos.csv" || echo "⚠ Error: Entes"
+          curl -L --retry 3 --retry-delay 5 -o data/69/EntespublicosydeGobiernoomisos.csv             "${BASE}/EntespublicosydeGobiernoomisos.csv" || echo "ERROR: Entes"
 
       - name: Descargar listas Artículo 69-B
         run: |
-          BASE="https://omawww.sat.gob.mx/cifras_sat/Documents"
+          BASE="https://wu1agsprosta001.blob.core.windows.net/agsc-publicaciones/Datos_abiertos/Documents_AGAFF"
 
           echo "Descargando Definitivos..."
-          curl -L --retry 3 --retry-delay 5 -o data/69b/Definitivos.csv \
-            "${BASE}/Definitivos.csv" || echo "⚠ Error: Definitivos"
+          curl -L --retry 3 --retry-delay 5 -o data/69b/Definitivos.csv             "${BASE}/Definitivos.csv" || echo "ERROR: Definitivos"
 
           echo "Descargando Presuntos..."
-          curl -L --retry 3 --retry-delay 5 -o data/69b/Presuntos.csv \
-            "${BASE}/Presuntos.csv" || echo "⚠ Error: Presuntos"
+          curl -L --retry 3 --retry-delay 5 -o data/69b/Presuntos.csv             "${BASE}/Presuntos.csv" || echo "ERROR: Presuntos"
 
           echo "Descargando Desvirtuados..."
-          curl -L --retry 3 --retry-delay 5 -o data/69b/Desvirtuados.csv \
-            "${BASE}/Desvirtuados.csv" || echo "⚠ Error: Desvirtuados"
+          curl -L --retry 3 --retry-delay 5 -o data/69b/Desvirtuados.csv             "${BASE}/Desvirtuados.csv" || echo "ERROR: Desvirtuados"
 
           echo "Descargando SentenciasFavorables..."
-          curl -L --retry 3 --retry-delay 5 -o data/69b/SentenciasFavorables.csv \
-            "${BASE}/SentenciasFavorables.csv" || echo "⚠ Error: SentenciasFavorables"
+          curl -L --retry 3 --retry-delay 5 -o data/69b/SentenciasFavorables.csv             "${BASE}/SentenciasFavorables.csv" || echo "ERROR: SentenciasFavorables"
 
       - name: Verificar archivos descargados
         run: |
           echo "=== Archivos en data/69/ ==="
-          ls -lh data/69/ 2>/dev/null || echo "Carpeta vacía"
+          ls -lh data/69/ 2>/dev/null || echo "Carpeta vacia"
           echo "=== Archivos en data/69b/ ==="
-          ls -lh data/69b/ 2>/dev/null || echo "Carpeta vacía"
+          ls -lh data/69b/ 2>/dev/null || echo "Carpeta vacia"
 
       - name: Commit y push si hay cambios
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/
-          git add verificador-expand.html
           if git diff --staged --quiet; then
-            echo "Sin cambios — listas ya estaban actualizadas."
+            echo "Sin cambios, listas ya estaban actualizadas."
           else
             FECHA=$(TZ='America/Mexico_City' date '+%d/%m/%Y')
-            git commit -m "🤖 Actualización automática listas SAT · ${FECHA}"
+            git commit -m "Actualizacion automatica listas SAT ${FECHA}"
             git push
           fi
