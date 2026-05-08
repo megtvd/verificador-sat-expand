@@ -1,0 +1,93 @@
+name: Actualizar listas SAT
+
+on:
+  schedule:
+    # Corre cada lunes a las 6am (hora Ciudad de México = UTC-6)
+    - cron: '0 12 * * 1'
+  workflow_dispatch: # También permite correrlo manualmente desde GitHub
+
+jobs:
+  actualizar-listas:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Crear carpetas de datos
+        run: |
+          mkdir -p data/69
+          mkdir -p data/69b
+
+      - name: Descargar listas Artículo 69
+        run: |
+          BASE="https://omawww.sat.gob.mx/cifras_sat/Documents"
+
+          echo "Descargando Cancelados..."
+          curl -L --retry 3 --retry-delay 5 -o data/69/Cancelados.csv \
+            "${BASE}/Cancelados.csv" || echo "⚠ Error: Cancelados"
+
+          echo "Descargando No_localizados..."
+          curl -L --retry 3 --retry-delay 5 -o data/69/No_localizados.csv \
+            "${BASE}/No_localizados.csv" || echo "⚠ Error: No_localizados"
+
+          echo "Descargando CSDsinefectos..."
+          curl -L --retry 3 --retry-delay 5 -o data/69/CSDsinefectos.csv \
+            "${BASE}/CSDsinefectos.csv" || echo "⚠ Error: CSDsinefectos"
+
+          echo "Descargando Exigibles..."
+          curl -L --retry 3 --retry-delay 5 -o data/69/Exigibles.csv \
+            "${BASE}/Exigibles.csv" || echo "⚠ Error: Exigibles"
+
+          echo "Descargando Sentencias..."
+          curl -L --retry 3 --retry-delay 5 -o data/69/Sentencias.csv \
+            "${BASE}/Sentencias.csv" || echo "⚠ Error: Sentencias"
+
+          echo "Descargando ReduccionArt74CFF..."
+          curl -L --retry 3 --retry-delay 5 -o data/69/ReduccionArt74CFF.csv \
+            "${BASE}/ReduccionArt74CFF.csv" || echo "⚠ Error: ReduccionArt74CFF"
+
+          echo "Descargando EntespublicosydeGobiernoomisos..."
+          curl -L --retry 3 --retry-delay 5 -o data/69/EntespublicosydeGobiernoomisos.csv \
+            "${BASE}/EntespublicosydeGobiernoomisos.csv" || echo "⚠ Error: Entes"
+
+      - name: Descargar listas Artículo 69-B
+        run: |
+          BASE="https://omawww.sat.gob.mx/cifras_sat/Documents"
+
+          echo "Descargando Definitivos..."
+          curl -L --retry 3 --retry-delay 5 -o data/69b/Definitivos.csv \
+            "${BASE}/Definitivos.csv" || echo "⚠ Error: Definitivos"
+
+          echo "Descargando Presuntos..."
+          curl -L --retry 3 --retry-delay 5 -o data/69b/Presuntos.csv \
+            "${BASE}/Presuntos.csv" || echo "⚠ Error: Presuntos"
+
+          echo "Descargando Desvirtuados..."
+          curl -L --retry 3 --retry-delay 5 -o data/69b/Desvirtuados.csv \
+            "${BASE}/Desvirtuados.csv" || echo "⚠ Error: Desvirtuados"
+
+          echo "Descargando SentenciasFavorables..."
+          curl -L --retry 3 --retry-delay 5 -o data/69b/SentenciasFavorables.csv \
+            "${BASE}/SentenciasFavorables.csv" || echo "⚠ Error: SentenciasFavorables"
+
+      - name: Verificar archivos descargados
+        run: |
+          echo "=== Archivos en data/69/ ==="
+          ls -lh data/69/ 2>/dev/null || echo "Carpeta vacía"
+          echo "=== Archivos en data/69b/ ==="
+          ls -lh data/69b/ 2>/dev/null || echo "Carpeta vacía"
+
+      - name: Commit y push si hay cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git add verificador-expand.html
+          if git diff --staged --quiet; then
+            echo "Sin cambios — listas ya estaban actualizadas."
+          else
+            FECHA=$(TZ='America/Mexico_City' date '+%d/%m/%Y')
+            git commit -m "🤖 Actualización automática listas SAT · ${FECHA}"
+            git push
+          fi
